@@ -1,11 +1,11 @@
 const express = require('express')
-const {Product: Products} = require('../models/product')
+const {Product} = require('../models/product')
 const {Category} = require("../models/category");
 const router = express.Router()
 const mongoose = require('mongoose')
 
 router.get(`/`, async (req, res) => {
-  const productList = await Products.find() //.select('name image -_id')
+  const productList = await Product.find() //.select('name image -_id')
 
   if (!productList) {
     res.status(500).json({
@@ -17,7 +17,7 @@ router.get(`/`, async (req, res) => {
 })
 
 router.get(`/:id`, async (req, res) => {
-  const product = await Products.findById(req.params.id).populate('category')
+  const product = await Product.findById(req.params.id).populate('category')
 
   if (!product) {
     res.status(500).json({
@@ -35,7 +35,7 @@ router.post(`/`, async (req, res) => {
     return res.status(400).send({success: false, message: 'Invalid Category'})
   }
 
-  const product = new Products({
+  const product = new Product({
     name: req.body.name,
     description: req.body.description,
     richDescription: req.body.richDescription,
@@ -69,7 +69,7 @@ router.put('/:id', async (req, res) => {
     return res.status(400).send({success: false, message: 'Invalid Category'})
   }
 
-  const product = await Products.findByIdAndUpdate(req.params.id, {
+  const product = await Product.findByIdAndUpdate(req.params.id, {
     name: req.body.name,
     description: req.body.description,
     richDescription: req.body.richDescription,
@@ -93,7 +93,7 @@ router.put('/:id', async (req, res) => {
 })
 
 router.delete('/:id', (req, res) => {
-  Products.findByIdAndRemove(req.params.id).then(product => {
+  Product.findByIdAndRemove(req.params.id).then(product => {
     if (product) {
       return res.status(200).json({success: true, message: 'the product is deleted!'})
     }
@@ -103,5 +103,6 @@ router.delete('/:id', (req, res) => {
     return res.status(500).json({success: false, error: err})
   })
 })
+
 
 module.exports = router
