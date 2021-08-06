@@ -69,21 +69,25 @@ router.put('/:id', async (req, res) => {
     return res.status(400).send({ success: false, message: 'Invalid Category' })
   }
 
-  const product = await Product.findByIdAndUpdate(req.params.id, {
-    name: req.body.name,
-    description: req.body.description,
-    richDescription: req.body.richDescription,
-    image: req.body.image,
-    brand: req.body.brand,
-    price: req.body.price,
-    category: req.body.category,
-    countInStock: req.body.countInStock,
-    rating: req.body.rating,
-    numReviews: req.body.numReviews,
-    isFeatured: req.body.isFeatured,
-  }, {
-    new: true,
-  })
+  const product = await Product.findByIdAndUpdate(
+    req.params.id,
+    {
+      name: req.body.name,
+      description: req.body.description,
+      richDescription: req.body.richDescription,
+      image: req.body.image,
+      brand: req.body.brand,
+      price: req.body.price,
+      category: req.body.category,
+      countInStock: req.body.countInStock,
+      rating: req.body.rating,
+      numReviews: req.body.numReviews,
+      isFeatured: req.body.isFeatured,
+    },
+    {
+      new: true,
+    }
+  )
 
   if (!product) {
     return res.status(400).send('the product cannot be updated')
@@ -93,16 +97,29 @@ router.put('/:id', async (req, res) => {
 })
 
 router.delete('/:id', (req, res) => {
-  Product.findByIdAndRemove(req.params.id).then(product => {
-    if (product) {
-      return res.status(200).json({ success: true, message: 'the product is deleted!' })
-    }
+  Product.findByIdAndRemove(req.params.id)
+    .then((product) => {
+      if (product) {
+        return res.status(200).json({ success: true, message: 'the product is deleted!' })
+      }
 
-    return res.status(404).json({ success: false, message: 'product not found!' })
-  }).catch(err => {
-    return res.status(500).json({ success: false, error: err })
-  })
+      return res.status(404).json({ success: false, message: 'product not found!' })
+    })
+    .catch((err) => {
+      return res.status(500).json({ success: false, error: err })
+    })
 })
 
+router.get('/get/count', async (req, res) => {
+  const productCount = await Product.countDocuments((count) => count)
+
+  if (!productCount) {
+    res.status(500).json({
+      success: false,
+    })
+  }
+
+  res.send({ count: productCount })
+})
 
 module.exports = router
