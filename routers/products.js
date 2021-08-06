@@ -4,7 +4,7 @@ const {Category} = require("../models/category");
 const router = express.Router()
 
 router.get(`/`, async (req, res) => {
-  const productList = await Products.find()
+  const productList = await Products.find().select('name image -_id')
 
   if (!productList) {
     res.status(500).json({
@@ -13,6 +13,18 @@ router.get(`/`, async (req, res) => {
   }
 
   res.send(productList)
+})
+
+router.get(`/:id`, async (req, res) => {
+  const product = await Products.findById(req.params.id)
+
+  if (!product) {
+    res.status(500).json({
+      success: false
+    })
+  }
+
+  res.send(product)
 })
 
 router.post(`/`, async (req, res) => {
@@ -43,15 +55,6 @@ router.post(`/`, async (req, res) => {
   }
 
   res.status(200).send({success: true, product: result})
-
-  // product.save().then((result) => {
-  //   res.status(201).json(result)
-  // }).catch((error) => {
-  //   res.status(500).json({
-  //     error,
-  //     success: false
-  //   })
-  // })
 })
 
 module.exports = router
