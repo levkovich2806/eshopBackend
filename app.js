@@ -9,7 +9,6 @@ require('dotenv/config')
 const productsRouter = require('./routers/products')
 const categoriesRouter = require('./routers/categories')
 
-
 app.use(cors())
 app.options('*', cors())
 
@@ -23,11 +22,12 @@ const api = process.env.API_URL
 app.use(`${api}/products`, productsRouter)
 app.use(`${api}/categories`, categoriesRouter)
 
-mongoose.connect(process.env.CONNECTION_STRING, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  dbName: 'eshop-database'
-})
+mongoose
+  .connect(process.env.CONNECTION_STRING, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    dbName: 'eshop-database',
+  })
   .then(() => {
     console.log('Database Connection is ready...')
   })
@@ -36,5 +36,5 @@ mongoose.connect(process.env.CONNECTION_STRING, {
   })
 
 app.listen(3322, () => {
-  console.log("server is running http://localhost:3322", api)
+  console.log('server is running http://localhost:3322', api)
 })

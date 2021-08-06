@@ -1,6 +1,6 @@
 const express = require('express')
-const {Product} = require('../models/product')
-const {Category} = require("../models/category");
+const { Product } = require('../models/product')
+const { Category } = require('../models/category')
 const router = express.Router()
 const mongoose = require('mongoose')
 
@@ -9,7 +9,7 @@ router.get(`/`, async (req, res) => {
 
   if (!productList) {
     res.status(500).json({
-      success: false
+      success: false,
     })
   }
 
@@ -21,7 +21,7 @@ router.get(`/:id`, async (req, res) => {
 
   if (!product) {
     res.status(500).json({
-      success: false
+      success: false,
     })
   }
 
@@ -32,7 +32,7 @@ router.post(`/`, async (req, res) => {
   const category = await Category.findById(req.body.category)
 
   if (!category) {
-    return res.status(400).send({success: false, message: 'Invalid Category'})
+    return res.status(400).send({ success: false, message: 'Invalid Category' })
   }
 
   const product = new Product({
@@ -52,21 +52,21 @@ router.post(`/`, async (req, res) => {
   const result = await product.save()
 
   if (!result) {
-    return res.status(500).send({success: false, message: 'The product cannot be created'})
+    return res.status(500).send({ success: false, message: 'The product cannot be created' })
   }
 
-  res.status(200).send({success: true, product: result})
+  res.status(200).send({ success: true, product: result })
 })
 
 router.put('/:id', async (req, res) => {
   if (!mongoose.isValidObjectId(req.params.id)) {
-    return res.status(400).send({success: false, message: 'Invalid Product Id'})
+    return res.status(400).send({ success: false, message: 'Invalid Product Id' })
   }
 
   const category = await Category.findById(req.body.category)
 
   if (!category) {
-    return res.status(400).send({success: false, message: 'Invalid Category'})
+    return res.status(400).send({ success: false, message: 'Invalid Category' })
   }
 
   const product = await Product.findByIdAndUpdate(req.params.id, {
@@ -82,7 +82,7 @@ router.put('/:id', async (req, res) => {
     numReviews: req.body.numReviews,
     isFeatured: req.body.isFeatured,
   }, {
-    new: true
+    new: true,
   })
 
   if (!product) {
@@ -95,12 +95,12 @@ router.put('/:id', async (req, res) => {
 router.delete('/:id', (req, res) => {
   Product.findByIdAndRemove(req.params.id).then(product => {
     if (product) {
-      return res.status(200).json({success: true, message: 'the product is deleted!'})
+      return res.status(200).json({ success: true, message: 'the product is deleted!' })
     }
 
-    return res.status(404).json({success: false, message: "product not found!"})
+    return res.status(404).json({ success: false, message: 'product not found!' })
   }).catch(err => {
-    return res.status(500).json({success: false, error: err})
+    return res.status(500).json({ success: false, error: err })
   })
 })
 
