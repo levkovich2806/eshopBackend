@@ -2,7 +2,7 @@ const { User } = require('../models/user')
 const express = require('express')
 const router = express.Router()
 const bcrypt = require('bcryptjs')
-const { Category } = require('../models/category')
+const jwt = require('jsonwebtoken')
 
 router.get('/', async (req, res) => {
   const userList = await User.find().select('-passwordHash')
@@ -45,6 +45,31 @@ router.post('/', async (req, res) => {
   }
 
   res.send(result)
+})
+
+router.post('/login', async (req, res) => {
+  const user = await User.findOne({ email: req.body.email })
+
+  if (!user) {
+    return res.status(400).send('The user not found')
+  }
+
+  if (bcrypt.compareSync(req.body.password, user.passwordHash)) {
+    const secret = process.env.SECRET
+    const token = jwt.sign(
+      {
+        userId: user.id,
+      },
+      secret,
+      {
+        expiresIn: '1d',
+      }
+    )
+
+    res.status(200).send({ user: user.email, token })
+  } else {
+    res.status(400).send('password is wrong')
+  }
 })
 
 module.exports = router
