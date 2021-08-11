@@ -66,11 +66,11 @@ exports.Order = mongoose.model('Order', orderSchema)
     "orderItems" : [
         {
             "quantity": 3,
-            "product" : "5fcfc406ae79b0a6a90d2585"
+            "product" : "6112d226e3ce142a3c911326"
         },
         {
             "quantity": 2,
-            "product" : "5fd293c7d3abe7295b1403c4"
+            "product" : "6112d26a799ec543ac2bb9ec"
         }
     ],
     "shippingAddress1" : "Flowers Street , 45",
