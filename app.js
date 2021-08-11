@@ -12,6 +12,7 @@ require('dotenv/config')
 const productsRouter = require('./routers/products')
 const categoriesRouter = require('./routers/categories')
 const usersRouter = require('./routers/users')
+const ordersRouter = require('./routers/orders')
 
 app.use(cors())
 app.options('*', cors())
@@ -28,6 +29,7 @@ const api = process.env.API_URL
 app.use(`${api}/products`, productsRouter)
 app.use(`${api}/categories`, categoriesRouter)
 app.use(`${api}/users`, usersRouter)
+app.use(`${api}/orders`, ordersRouter)
 
 mongoose
   .connect(process.env.CONNECTION_STRING, {
