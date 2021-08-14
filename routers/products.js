@@ -1,6 +1,7 @@
 const express = require('express')
 const { Product } = require('../models/product')
 const { Category } = require('../models/category')
+const { uploadPath, getBaseUploadPath } = require('../helpers/get-base-path')
 const router = express.Router()
 const mongoose = require('mongoose')
 const multer = require('multer')
@@ -16,7 +17,7 @@ const storage = multer.diskStorage({
     console.log(file)
     const isValid = FILE_TYPE_MAP[file.mimetype]
     const uploadError = !isValid ? new Error('invalid error type') : null
-    cb(uploadError, 'public/uploads')
+    cb(uploadError, uploadPath)
   },
   filename: function (req, file, cb) {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9)
@@ -69,7 +70,7 @@ router.post(`/`, uploadOptions.single('image'), async (req, res) => {
   }
 
   const fileName = req.file.filename
-  const basePath = `${req.protocol}://${req.get('host')}/public/uploads/`
+  const basePath = getBaseUploadPath(req)
 
   const product = new Product({
     name: req.body.name,
@@ -169,6 +170,31 @@ router.get('/get/featured/:count?', async (req, res) => {
   }
 
   res.send(products)
+})
+
+router.put('/gallery-images/:id', uploadOptions.array('images', 10), async (req, res) => {
+  if (!mongoose.isValidObjectId(req.params.id)) {
+    return res.status(400).send({ success: false, message: 'Invalid Product Id' })
+  }
+
+  const basePath = getBaseUploadPath(req)
+  const imagesPaths = (req.files || []).map((file) => `${basePath}${file.filename}`)
+
+  const product = await Product.findByIdAndUpdate(
+    req.params.id,
+    {
+      images: imagesPaths,
+    },
+    {
+      new: true,
+    }
+  )
+
+  if (!product) {
+    return res.status(400).send('the product cannot be updated')
+  }
+
+  res.status(200).send(product)
 })
 
 module.exports = router
